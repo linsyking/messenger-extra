@@ -3,10 +3,11 @@
     "name": "linsyking/messenger-extra",
     "summary": "Extra library for Messenger.",
     "license": "BSD-3-Clause",
-    "version": "1.1.1",
+    "version": "1.2.0",
     "exposed-modules": {
         "Core Extension": [
-            "Messenger.Layer.LayerExtra"
+            "Messenger.Layer.LayerExtra",
+            "Messenger.Component.PortableComponent"
         ],
         "Misc": [
             "Messenger.Misc.KeyCode",
