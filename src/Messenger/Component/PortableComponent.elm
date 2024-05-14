@@ -4,6 +4,7 @@ module Messenger.Component.PortableComponent exposing
     , PortableTarCodec
     , genPortableComponent
     , PortableComponentInit, PortableComponentUpdate, PortableComponentUpdateRec, PortableComponentView
+    , PortableComponentStorage
     )
 
 {-|
@@ -65,13 +66,13 @@ type alias PortableComponentUpdateRec data userdata tar msg scenemsg =
 {-| Portable component view type sugar
 -}
 type alias PortableComponentView userdata data =
-    Env () userdata -> data -> ( Renderable, Int )
+    Env () userdata -> data -> Renderable
 
 
 {-| Portable component storage as a specific component type sugar
 -}
-type alias PortableComponentStorage cdata userdata tar msg gtar gmsg bdata scenemsg =
-    PortableTarCodec tar gtar -> PortableMsgCodec msg gmsg -> bdata -> Env cdata userdata -> gmsg -> AbstractComponent cdata userdata gtar gmsg bdata scenemsg
+type alias PortableComponentStorage cdata userdata gtar gmsg bdata scenemsg =
+    Env cdata userdata -> gmsg -> AbstractComponent cdata userdata gtar gmsg bdata scenemsg
 
 
 {-| ConcretePortableComponent
@@ -101,8 +102,8 @@ This will add an empty basedata provided when init and upcast target and message
 You should pass a BaseData with any value, which means you just need to match the data type.
 
 -}
-translatePortableComponent : ConcretePortableComponent data userdata tar msg scenemsg -> PortableTarCodec tar gtar -> PortableMsgCodec msg gmsg -> bdata -> ConcreteUserComponent data cdata userdata gtar gmsg bdata scenemsg
-translatePortableComponent pcomp tarcodec msgcodec emptyBaseData =
+translatePortableComponent : ConcretePortableComponent data userdata tar msg scenemsg -> PortableTarCodec tar gtar -> PortableMsgCodec msg gmsg -> bdata -> Int -> ConcreteUserComponent data cdata userdata gtar gmsg bdata scenemsg
+translatePortableComponent pcomp tarcodec msgcodec emptyBaseData zindex =
     let
         msgMDecoder =
             genMsgDecoder msgcodec tarcodec
@@ -122,7 +123,7 @@ translatePortableComponent pcomp tarcodec msgcodec emptyBaseData =
                     pcomp.updaterec (removeCommonData env) (msgcodec.encode gmsg) data
             in
             ( ( resData, baseData ), List.map msgMDecoder resMsg, addCommonData env.commonData resEnv )
-    , view = \env data _ -> pcomp.view (removeCommonData env) data
+    , view = \env data _ -> ( pcomp.view (removeCommonData env) data, zindex )
     , matcher = \data _ gtar -> pcomp.matcher data <| tarcodec.encode gtar
     }
 
@@ -168,6 +169,6 @@ genMsgDecoder msgcodec tarcodec sMsgM =
 
 {-| Generate abstract component from concrete component.
 -}
-genPortableComponent : ConcretePortableComponent data userdata tar msg scenemsg -> PortableComponentStorage cdata userdata tar msg gtar gmsg bdata scenemsg
-genPortableComponent conpcomp tcodec mcodec emptyBaseData env =
-    abstract (translatePortableComponent conpcomp tcodec mcodec emptyBaseData) env
+genPortableComponent : ConcretePortableComponent data userdata tar msg scenemsg -> PortableTarCodec tar gtar -> PortableMsgCodec msg gmsg -> bdata -> Int -> PortableComponentStorage cdata userdata gtar gmsg bdata scenemsg
+genPortableComponent conpcomp tcodec mcodec emptyBaseData zindex =
+    abstract (translatePortableComponent conpcomp tcodec mcodec emptyBaseData zindex)
