@@ -163,8 +163,8 @@ genMsgDecoder msgcodec tarcodec sMsgM =
                 SOMMsg som ->
                     Parent <| SOMMsg som
 
-        Other othertar smsg ->
-            Other (tarcodec.decode othertar) (msgcodec.decode smsg)
+        Other ( othertar, smsg ) ->
+            Other ( tarcodec.decode othertar, msgcodec.decode smsg )
 
 
 {-| Generate abstract component from concrete component.
