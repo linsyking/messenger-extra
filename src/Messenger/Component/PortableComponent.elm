@@ -41,7 +41,7 @@ list of user components.
 import Canvas exposing (Renderable)
 import Messenger.Base exposing (Env, UserEvent, addCommonData, removeCommonData)
 import Messenger.Component.Component exposing (AbstractComponent, ConcreteUserComponent)
-import Messenger.GeneralModel exposing (Matcher, Msg(..), MsgBase(..), abstract)
+import Messenger.GeneralModel exposing (MMsg, Matcher, Msg(..), MsgBase(..), abstract)
 import Messenger.Scene.Scene exposing (SceneOutputMsg(..))
 
 
@@ -54,13 +54,13 @@ type alias PortableComponentInit userdata msg data =
 {-| Portable component update type sugar
 -}
 type alias PortableComponentUpdate data userdata tar msg scenemsg =
-    Env () userdata -> UserEvent -> data -> ( data, List (Msg tar msg (SceneOutputMsg scenemsg userdata)), ( Env () userdata, Bool ) )
+    Env () userdata -> UserEvent -> data -> ( data, List (MMsg tar msg scenemsg userdata), ( Env () userdata, Bool ) )
 
 
 {-| Portable component updaterec type sugar
 -}
 type alias PortableComponentUpdateRec data userdata tar msg scenemsg =
-    Env () userdata -> msg -> data -> ( data, List (Msg tar msg (SceneOutputMsg scenemsg userdata)), Env () userdata )
+    Env () userdata -> msg -> data -> ( data, List (MMsg tar msg scenemsg userdata), Env () userdata )
 
 
 {-| Portable component view type sugar
@@ -72,7 +72,7 @@ type alias PortableComponentView userdata data =
 {-| Portable component storage as a specific component type sugar
 -}
 type alias PortableComponentStorage cdata userdata gtar gmsg bdata scenemsg =
-    Env cdata userdata -> gmsg -> AbstractComponent cdata userdata gtar gmsg bdata scenemsg
+    gmsg -> Env cdata userdata -> AbstractComponent cdata userdata gtar gmsg bdata scenemsg
 
 
 {-| ConcretePortableComponent
