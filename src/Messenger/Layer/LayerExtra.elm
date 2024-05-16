@@ -29,7 +29,8 @@ type alias BasicUpdater data cdata userdata tar msg scenemsg =
 
 A distributor is used to generate several list of Component Msgs for corresponding components list.
 
-The `cmsgpacker` is a custom type to store the component msgs and their targets.
+The `cmsgpacker` is a custom type to store the component msgs and their targets. Specifically, a `cmsgpacker` type should be
+a record of different `List ( ComponentTarget, ComponentMsg )`.
 
 -}
 type alias Distributor data cdata userdata tar msg scenemsg cmsgpacker =
