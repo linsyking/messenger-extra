@@ -3,7 +3,7 @@
     "name": "linsyking/messenger-extra",
     "summary": "Extra library for Messenger.",
     "license": "BSD-3-Clause",
-    "version": "2.0.0",
+    "version": "2.0.1",
     "exposed-modules": {
         "Core Extension": [
             "Messenger.Layer.LayerExtra",
@@ -19,7 +19,7 @@
         "elm/core": "1.0.0 <= v < 2.0.0",
         "elm/random": "1.0.0 <= v < 2.0.0",
         "linsyking/elm-canvas": "4.0.0 <= v < 5.0.0",
-        "linsyking/messenger-core": "11.0.0 <= v < 12.0.0"
+        "linsyking/messenger-core": "12.0.0 <= v < 13.0.0"
     },
     "test-dependencies": {}
 }
