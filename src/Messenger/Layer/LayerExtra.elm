@@ -10,8 +10,7 @@ module Messenger.Layer.LayerExtra exposing (BasicUpdater, Distributor)
 -}
 
 import Messenger.Base exposing (Env, UserEvent)
-import Messenger.GeneralModel exposing (Msg)
-import Messenger.Scene.Scene exposing (SceneOutputMsg)
+import Messenger.GeneralModel exposing (MMsg)
 
 
 {-| Basic Update Type
@@ -22,7 +21,7 @@ Users can use it as the first step of the update process
 
 -}
 type alias BasicUpdater data cdata userdata tar msg scenemsg =
-    Env cdata userdata -> UserEvent -> data -> ( data, List (Msg tar msg (SceneOutputMsg scenemsg userdata)), ( Env cdata userdata, Bool ) )
+    Env cdata userdata -> UserEvent -> data -> ( data, List (MMsg tar msg scenemsg userdata), ( Env cdata userdata, Bool ) )
 
 
 {-| Distributor Type
@@ -34,4 +33,4 @@ a record of different `List ( ComponentTarget, ComponentMsg )`.
 
 -}
 type alias Distributor data cdata userdata tar msg scenemsg cmsgpacker =
-    Env cdata userdata -> UserEvent -> data -> ( data, ( List (Msg tar msg (SceneOutputMsg scenemsg userdata)), cmsgpacker ), Env cdata userdata )
+    Env cdata userdata -> UserEvent -> data -> ( data, ( List (MMsg tar msg scenemsg userdata), cmsgpacker ), Env cdata userdata )
