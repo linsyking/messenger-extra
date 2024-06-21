@@ -10,7 +10,7 @@ module Messenger.Layer.LayerExtra exposing (BasicUpdater, Distributor)
 -}
 
 import Messenger.Base exposing (Env, UserEvent)
-import Messenger.GeneralModel exposing (MMsg)
+import Messenger.Scene.Scene exposing (MMsg)
 
 
 {-| Basic Update Type

@@ -41,8 +41,8 @@ list of user components.
 import Canvas exposing (Renderable)
 import Messenger.Base exposing (Env, UserEvent, addCommonData, removeCommonData)
 import Messenger.Component.Component exposing (AbstractComponent, ConcreteUserComponent)
-import Messenger.GeneralModel exposing (MMsg, Matcher, Msg(..), MsgBase(..), abstract)
-import Messenger.Scene.Scene exposing (SceneOutputMsg(..))
+import Messenger.GeneralModel exposing (Matcher, Msg(..), MsgBase(..), abstract)
+import Messenger.Scene.Scene exposing (MMsg, SceneOutputMsg(..))
 
 
 {-| Portable component init type sugar
