@@ -1,4 +1,7 @@
-module Messenger.GlobalComponents.Transition.Model exposing (InitOption, genGC)
+module Messenger.GlobalComponents.Transition.Model exposing
+    ( InitOption, genGC
+    , genTransitionSOM, genSequentialTransitionSOM, genMixedTransitionSOM
+    )
 
 {-|
 
@@ -6,15 +9,17 @@ module Messenger.GlobalComponents.Transition.Model exposing (InitOption, genGC)
 # Transition
 
 @docs InitOption, genGC
+@docs genTransitionSOM, genSequentialTransitionSOM, genMixedTransitionSOM
 
 -}
 
 import Canvas exposing (Renderable)
+import Duration exposing (Duration)
 import Json.Encode exposing (null)
 import Messenger.Base exposing (UserEvent(..), removeCommonData)
 import Messenger.Component.GlobalComponent exposing (genGlobalComponent)
 import Messenger.GeneralModel exposing (Msg(..), MsgBase(..))
-import Messenger.GlobalComponents.Transition.Transitions.Base exposing (Transition)
+import Messenger.GlobalComponents.Transition.Transitions.Base exposing (SingleTrans, Transition, TransitionOption, genTransition)
 import Messenger.Scene.Scene exposing (AbstractScene(..), ConcreteGlobalComponent, GCTarget, GlobalComponentInit, GlobalComponentStorage, GlobalComponentUpdate, GlobalComponentUpdateRec, GlobalComponentView, MAbstractScene, SceneOutputMsg(..), updateResultRemap)
 import Messenger.Scene.VSR exposing (VSR, updateVSR, viewVSR)
 
@@ -265,3 +270,30 @@ gcCon opt =
 genGC : InitOption scenemsg -> Maybe GCTarget -> GlobalComponentStorage userdata scenemsg
 genGC opt =
     genGlobalComponent (gcCon opt) null
+
+
+{-| Generate a scene output message for a transition.
+-}
+genTransitionSOM : ( SingleTrans, Duration ) -> ( SingleTrans, Duration ) -> Bool -> ( String, Maybe scenemsg ) -> Bool -> SceneOutputMsg scenemsg userdata
+genTransitionSOM t1 t2 opt1 scene filter =
+    SOMLoadGC <|
+        genGC
+            { transition = genTransition t1 t2 (Just <| TransitionOption opt1)
+            , scene = scene
+            , filterSOM = filter
+            }
+            Nothing
+
+
+{-| Generate a sequential transition scene output message.
+-}
+genSequentialTransitionSOM : ( SingleTrans, Duration ) -> ( SingleTrans, Duration ) -> ( String, Maybe scenemsg ) -> SceneOutputMsg scenemsg userdata
+genSequentialTransitionSOM t1 t2 scene =
+    genTransitionSOM t1 t2 False scene True
+
+
+{-| Generate a mixed transition scene output message.
+-}
+genMixedTransitionSOM : ( SingleTrans, Duration ) -> ( SingleTrans, Duration ) -> ( String, Maybe scenemsg ) -> SceneOutputMsg scenemsg userdata
+genMixedTransitionSOM t1 t2 scene =
+    genTransitionSOM t1 t2 True scene True
