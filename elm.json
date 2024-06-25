@@ -7,7 +7,8 @@
     "exposed-modules": {
         "Core Extension": [
             "Messenger.Layer.LayerExtra",
-            "Messenger.Component.PortableComponent"
+            "Messenger.Component.PortableComponent",
+            "Messenger.Component.InitUpdateComponent"
         ],
         "Misc": [
             "Messenger.Misc.KeyCode",
