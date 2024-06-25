@@ -30,7 +30,7 @@
         "elm/random": "1.0.0 <= v < 2.0.0",
         "ianmackenzie/elm-units": "2.10.0 <= v < 3.0.0",
         "linsyking/elm-canvas": "4.1.0 <= v < 5.0.0",
-        "linsyking/messenger-core": "13.0.0 <= v < 14.0.0"
+        "linsyking/messenger-core": "13.0.0 <= v < 15.0.0"
     },
     "test-dependencies": {}
 }
