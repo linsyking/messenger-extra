@@ -18,9 +18,8 @@
         "GlobalComponents": [
             "Messenger.GlobalComponents.FPS.Model",
             "Messenger.GlobalComponents.Transition.Model",
-            "Messenger.GlobalComponents.Transition.Transitions.Base",
-            "Messenger.GlobalComponents.Transition.Transitions.Fade",
-            "Messenger.GlobalComponents.Transition.Transitions.Scroll"
+            "Messenger.GlobalComponents.Transition.Base",
+            "Messenger.GlobalComponents.Transition.Transitions"
         ]
     },
     "elm-version": "0.19.0 <= v < 0.20.0",
