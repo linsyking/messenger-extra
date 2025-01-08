@@ -13,9 +13,9 @@ module Messenger.Scene.VSR exposing
 
 -}
 
-import REGL exposing (Renderable)
 import Messenger.Base exposing (Env, UserEvent(..))
 import Messenger.Scene.Scene exposing (MAbstractScene, SceneOutputMsg, unroll)
+import REGL exposing (Renderable)
 
 
 {-| Virtual Scene Runner
