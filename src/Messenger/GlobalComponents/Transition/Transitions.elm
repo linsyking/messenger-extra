@@ -1,6 +1,7 @@
 module Messenger.GlobalComponents.Transition.Transitions exposing
     ( fadeIn, fadeInWithColor, fadeInWithRenderable, fadeOut, fadeOutWithColor, fadeOutWithRenderable
-    , fadeMix
+    , fadeMix, fadeImgMix
+    , fadeOutImg, fadeInImg
     )
 
 {-|
@@ -9,7 +10,8 @@ module Messenger.GlobalComponents.Transition.Transitions exposing
 # Builtin Transitions
 
 @docs fadeIn, fadeInWithColor, fadeInWithRenderable, fadeOut, fadeOutWithColor, fadeOutWithRenderable
-@docs fadeMix
+@docs fadeMix, fadeImgMix
+@docs fadeOutImg, fadeInImg
 
 -}
 
@@ -32,6 +34,20 @@ fadeOut r t =
 fadeIn : SingleTrans
 fadeIn r t =
     Comp.linearFade t (P.clear Color.black) r
+
+
+{-| Fade out transition using mask image.
+-}
+fadeOutImg : String -> SingleTrans
+fadeOutImg mask r t =
+    Comp.imgFade mask t r (P.clear Color.black)
+
+
+{-| Fade in transition using mask image.
+-}
+fadeInImg : String -> SingleTrans
+fadeInImg mask r t =
+    Comp.imgFade mask t (P.clear Color.black) r
 
 
 {-| Fade out transition with a color.
@@ -67,3 +83,10 @@ fadeInWithRenderable c r t =
 fadeMix : DoubleTrans
 fadeMix r1 r2 t =
     Comp.linearFade t r1 r2
+
+
+{-| Fading transition based on mask image used in mixed mode.
+-}
+fadeImgMix : String -> DoubleTrans
+fadeImgMix mask r1 r2 t =
+    Comp.imgFade mask t r1 r2
