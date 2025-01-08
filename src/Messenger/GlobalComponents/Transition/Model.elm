@@ -13,15 +13,15 @@ module Messenger.GlobalComponents.Transition.Model exposing
 
 -}
 
-import REGL exposing (Renderable)
 import Duration exposing (Duration)
 import Json.Encode exposing (null)
 import Messenger.Base exposing (UserEvent(..), removeCommonData)
 import Messenger.Component.GlobalComponent exposing (genGlobalComponent)
 import Messenger.GeneralModel exposing (Msg(..), MsgBase(..))
-import Messenger.GlobalComponents.Transition.Transitions.Base exposing (SingleTrans, Transition, TransitionOption, genTransition)
+import Messenger.GlobalComponents.Transition.Base exposing (DoubleTrans, MixTransition, NoMixTransition, SingleTrans, Transition(..), genMixTransition, genNoMixTransition)
 import Messenger.Scene.Scene exposing (AbstractScene(..), ConcreteGlobalComponent, GCTarget, GlobalComponentInit, GlobalComponentStorage, GlobalComponentUpdate, GlobalComponentUpdateRec, GlobalComponentView, MAbstractScene, SceneOutputMsg(..), updateResultRemap)
 import Messenger.Scene.VSR exposing (VSR, updateVSR, viewVSR)
+import REGL exposing (Renderable)
 
 
 {-| Options
@@ -93,11 +93,12 @@ update env evnt data bdata =
             else
                 ( env, data )
     in
-    if trans0.options.mix then
-        updateMix env1 evnt data1 bdata
+    case trans0 of
+        MTransition t ->
+            updateMix t env1 evnt data1 bdata
 
-    else
-        updateNoMix env1 evnt data1 bdata
+        NMTransition t ->
+            updateNoMix t env1 evnt data1 bdata
 
 
 max1 : Float -> Float
@@ -109,12 +110,9 @@ max1 a =
         a
 
 
-updateMix : GlobalComponentUpdate userdata scenemsg (Data userdata scenemsg)
-updateMix env evnt data bdata =
+updateMix : MixTransition -> GlobalComponentUpdate userdata scenemsg (Data userdata scenemsg)
+updateMix trans0 env evnt data bdata =
     let
-        trans0 =
-            data.transition
-
         ( scene, scenemsg ) =
             data.scene
 
@@ -148,9 +146,9 @@ updateMix env evnt data bdata =
                             ( data1, soms )
 
                 data2 =
-                    { data1_1 | transition = { trans0 | currentTransition = newTime } }
+                    { data1_1 | transition = MTransition { trans0 | currentTransition = newTime } }
             in
-            if newTime >= max trans0.inT trans0.outT then
+            if newTime >= trans0.t then
                 -- End
                 ( ( data2, { bdata | dead = True } ), soms1, ( env, False ) )
 
@@ -159,22 +157,18 @@ updateMix env evnt data bdata =
                     oldSceneView =
                         case data2.vsr of
                             Nothing ->
-                                Canvas.empty
+                                REGL.empty
 
                             Just vsr ->
                                 viewVSR vsr
 
-                    outProgress =
-                        max1 <| toFloat data.transition.currentTransition / toFloat data.transition.outT
-
-                    inProgress =
-                        max1 <| toFloat data.transition.currentTransition / toFloat data.transition.inT
+                    progress =
+                        trans0.currentTransition / trans0.t
 
                     pp : Renderable -> Renderable
                     pp ren =
-                        Canvas.group []
-                            [ data.transition.inTrans env.globalData.internalData ren inProgress
-                            , data.transition.outTrans env.globalData.internalData oldSceneView outProgress
+                        REGL.group []
+                            [ trans0.trans oldSceneView ren progress
                             ]
                 in
                 ( ( data2, { bdata | postProcessor = pp } ), soms1, ( env, False ) )
@@ -183,12 +177,8 @@ updateMix env evnt data bdata =
             ( ( data1, bdata ), soms, ( env, False ) )
 
 
-updateNoMix : GlobalComponentUpdate userdata scenemsg (Data userdata scenemsg)
-updateNoMix env evnt data bdata =
-    let
-        trans0 =
-            data.transition
-    in
+updateNoMix : NoMixTransition -> GlobalComponentUpdate userdata scenemsg (Data userdata scenemsg)
+updateNoMix trans0 env evnt data bdata =
     case evnt of
         Tick delta ->
             let
@@ -196,7 +186,7 @@ updateNoMix env evnt data bdata =
                     trans0.currentTransition + delta
 
                 data2 =
-                    { data | transition = { trans0 | currentTransition = newTime } }
+                    { data | transition = NMTransition { trans0 | currentTransition = newTime } }
             in
             if newTime >= trans0.inT + trans0.outT then
                 -- End
@@ -205,11 +195,11 @@ updateNoMix env evnt data bdata =
             else if trans0.currentTransition <= trans0.outT then
                 let
                     progress =
-                        max1 <| toFloat trans0.currentTransition / toFloat trans0.outT
+                        max1 <| trans0.currentTransition / trans0.outT
 
                     outPP : Renderable -> Renderable
                     outPP ren =
-                        trans0.outTrans env.globalData.internalData ren progress
+                        trans0.outTrans ren progress
                 in
                 if newTime >= trans0.outT then
                     -- Needs to change scene
@@ -218,11 +208,11 @@ updateNoMix env evnt data bdata =
                             data.scene
 
                         progress2 =
-                            max1 <| toFloat (newTime - trans0.outT) / toFloat trans0.inT
+                            max1 <| (newTime - trans0.outT) / trans0.inT
 
                         inPP : Renderable -> Renderable
                         inPP ren =
-                            trans0.inTrans env.globalData.internalData ren progress2
+                            trans0.inTrans ren progress2
                     in
                     ( ( data2, { bdata | postProcessor = inPP } ), [ Parent <| SOMMsg (SOMChangeScene scenemsg scene) ], ( env, False ) )
 
@@ -233,11 +223,11 @@ updateNoMix env evnt data bdata =
                 -- Implies trans0.outT + trans0.inT > trans0.currentTransition > trans0.outT
                 let
                     progress =
-                        max1 <| toFloat (trans0.currentTransition - trans0.outT) / toFloat trans0.inT
+                        max1 <| (trans0.currentTransition - trans0.outT) / trans0.inT
 
                     inPP : Renderable -> Renderable
                     inPP ren =
-                        trans0.inTrans env.globalData.internalData ren progress
+                        trans0.inTrans ren progress
                 in
                 ( ( data2, { bdata | postProcessor = inPP } ), [], ( env, False ) )
 
@@ -252,7 +242,7 @@ updaterec env _ data bdata =
 
 view : GlobalComponentView userdata scenemsg (Data userdata scenemsg)
 view _ _ _ =
-    Canvas.empty
+    REGL.empty
 
 
 gcCon : InitOption scenemsg -> ConcreteGlobalComponent (Data userdata scenemsg) userdata scenemsg
@@ -274,11 +264,11 @@ genGC opt =
 
 {-| Generate a scene output message for a transition.
 -}
-genTransitionSOM : ( SingleTrans, Duration ) -> ( SingleTrans, Duration ) -> Bool -> ( String, Maybe scenemsg ) -> Bool -> SceneOutputMsg scenemsg userdata
-genTransitionSOM t1 t2 opt1 scene filter =
+genTransitionSOM : Transition -> ( String, Maybe scenemsg ) -> Bool -> SceneOutputMsg scenemsg userdata
+genTransitionSOM t scene filter =
     SOMLoadGC <|
         genGC
-            { transition = genTransition t1 t2 (Just <| TransitionOption opt1)
+            { transition = t
             , scene = scene
             , filterSOM = filter
             }
@@ -289,11 +279,11 @@ genTransitionSOM t1 t2 opt1 scene filter =
 -}
 genSequentialTransitionSOM : ( SingleTrans, Duration ) -> ( SingleTrans, Duration ) -> ( String, Maybe scenemsg ) -> SceneOutputMsg scenemsg userdata
 genSequentialTransitionSOM t1 t2 scene =
-    genTransitionSOM t1 t2 False scene True
+    genTransitionSOM (genNoMixTransition t1 t2) scene True
 
 
 {-| Generate a mixed transition scene output message.
 -}
-genMixedTransitionSOM : ( SingleTrans, Duration ) -> ( SingleTrans, Duration ) -> ( String, Maybe scenemsg ) -> SceneOutputMsg scenemsg userdata
-genMixedTransitionSOM t1 t2 scene =
-    genTransitionSOM t1 t2 True scene True
+genMixedTransitionSOM : ( DoubleTrans, Duration ) -> ( String, Maybe scenemsg ) -> SceneOutputMsg scenemsg userdata
+genMixedTransitionSOM t scene =
+    genTransitionSOM (genMixTransition t) scene True
