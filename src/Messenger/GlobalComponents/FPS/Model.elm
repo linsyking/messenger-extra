@@ -12,8 +12,8 @@ import Color
 import Json.Encode as E
 import Messenger.Base exposing (UserEvent(..))
 import Messenger.Component.GlobalComponent exposing (genGlobalComponent)
-import Messenger.Render.Text exposing (renderTextWithColor)
 import Messenger.Scene.Scene exposing (ConcreteGlobalComponent, GCTarget, GlobalComponentInit, GlobalComponentStorage, GlobalComponentUpdate, GlobalComponentUpdateRec, GlobalComponentView)
+import REGL.BuiltinPrograms as P
 
 
 {-| Init Options
@@ -24,7 +24,7 @@ type alias InitOption =
 
 
 type alias Data =
-    { lastTenTime : List Int
+    { lastTenTime : List Float
     , fps : Float
     , size : Float
     }
@@ -57,7 +57,7 @@ update env evnt data bdata =
                         ++ [ delta ]
 
                 sum =
-                    toFloat (List.sum lastTimes)
+                    List.sum lastTimes
 
                 fps =
                     toFloat (List.length lastTimes) / sum * 1000
@@ -75,7 +75,7 @@ updaterec env _ data bdata =
 
 view : GlobalComponentView userdata scenemsg Data
 view env data _ =
-    renderTextWithColor env.globalData.internalData data.size ("FPS: " ++ String.fromInt (floor data.fps)) "Arial" Color.gray ( 0, 0 )
+    P.textbox ( 0, env.globalData.internalData.virtualHeight ) data.size ("FPS: " ++ String.fromFloat data.fps) "arial" Color.gray
 
 
 gcCon : InitOption -> ConcreteGlobalComponent Data userdata scenemsg

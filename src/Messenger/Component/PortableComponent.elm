@@ -38,7 +38,7 @@ list of user components.
 
 -}
 
-import Canvas exposing (Renderable)
+import REGL exposing (Renderable)
 import Messenger.Base exposing (Env, UserEvent, addCommonData, removeCommonData)
 import Messenger.Component.Component exposing (AbstractComponent, ConcreteUserComponent)
 import Messenger.GeneralModel exposing (Matcher, Msg(..), MsgBase(..), abstract)

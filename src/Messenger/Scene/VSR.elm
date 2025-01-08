@@ -13,7 +13,7 @@ module Messenger.Scene.VSR exposing
 
 -}
 
-import Canvas exposing (Renderable)
+import REGL exposing (Renderable)
 import Messenger.Base exposing (Env, UserEvent(..))
 import Messenger.Scene.Scene exposing (MAbstractScene, SceneOutputMsg, unroll)
 
@@ -43,7 +43,7 @@ updateVSR vsr evnt =
                             env.globalData
 
                         newgd =
-                            { gd | sceneStartFrame = gd.sceneStartFrame + 1, sceneStartTime = gd.sceneStartFrame + delta, globalStartTime = gd.sceneStartTime + delta, globalStartFrame = gd.globalStartFrame + 1 }
+                            { gd | sceneStartFrame = gd.sceneStartFrame + 1, sceneStartTime = gd.sceneStartTime + delta, globalStartTime = gd.sceneStartTime + delta, globalStartFrame = gd.globalStartFrame + 1 }
                     in
                     { env | globalData = newgd }
 

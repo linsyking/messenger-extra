@@ -13,7 +13,7 @@ module Messenger.GlobalComponents.Transition.Transitions.Base exposing
 
 -}
 
-import Canvas exposing (Renderable)
+import REGL exposing (Renderable)
 import Duration exposing (Duration)
 import Messenger.Base exposing (InternalData)
 

@@ -13,7 +13,7 @@ module Messenger.GlobalComponents.Transition.Model exposing
 
 -}
 
-import Canvas exposing (Renderable)
+import REGL exposing (Renderable)
 import Duration exposing (Duration)
 import Json.Encode exposing (null)
 import Messenger.Base exposing (UserEvent(..), removeCommonData)
