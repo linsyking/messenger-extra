@@ -53,6 +53,8 @@ type alias NoMixTransition =
     }
 
 
+{-| Mix Transition
+-}
 type alias MixTransition =
     { currentTransition : Float
     , t : Float
@@ -60,12 +62,14 @@ type alias MixTransition =
     }
 
 
+{-| Transition
+-}
 type Transition
     = NMTransition NoMixTransition
     | MTransition MixTransition
 
 
-{-| Generate new transition
+{-| Generate nomix transition
 -}
 genNoMixTransition : ( SingleTrans, Duration ) -> ( SingleTrans, Duration ) -> Transition
 genNoMixTransition ( outTrans, outT ) ( inTrans, inT ) =
@@ -78,7 +82,7 @@ genNoMixTransition ( outTrans, outT ) ( inTrans, inT ) =
         }
 
 
-{-| Generate new transition
+{-| Generate mixed transition
 -}
 genMixTransition : ( DoubleTrans, Duration ) -> Transition
 genMixTransition ( trans, t ) =
