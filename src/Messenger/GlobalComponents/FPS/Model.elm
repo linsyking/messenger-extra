@@ -75,7 +75,7 @@ updaterec env _ data bdata =
 
 view : GlobalComponentView userdata scenemsg Data
 view env data _ =
-    P.textbox ( 0, env.globalData.internalData.virtualHeight ) data.size ("FPS: " ++ String.fromInt (floor data.fps)) "arial" Color.gray
+    P.textbox ( 0, env.globalData.internalData.virtualHeight ) data.size ("FPS: " ++ String.fromInt (floor data.fps)) "arial" (Color.rgba 0 0 0 0.5)
 
 
 gcCon : InitOption -> ConcreteGlobalComponent Data userdata scenemsg
