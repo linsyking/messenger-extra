@@ -20,19 +20,16 @@ import REGL.BuiltinPrograms as P
 {-| Init Options
 -}
 type alias InitOption =
-    { bgColor : Color.Color
-    }
+    {}
 
 
 type alias Data =
-    { bgColor : Color.Color
-    }
+    {}
 
 
 init : InitOption -> GlobalComponentInit userdata scenemsg Data
 init opt _ _ =
-    ( { bgColor = opt.bgColor
-      }
+    ( {}
     , { dead = False
       , postProcessor = identity
       }
@@ -56,9 +53,20 @@ updaterec env _ data bdata =
 view : GlobalComponentView userdata scenemsg Data
 view env data _ =
     REGL.group []
-        [ P.clear data.bgColor
-        , P.textbox ( 0, env.globalData.internalData.virtualHeight ) 30 ("Loaded asset: " ++ String.fromInt (loadedResourceNum env.globalData)) "arial" Color.black
-        ]
+        (P.clear Color.black
+            :: List.map
+                (\i ->
+                    let
+                        x =
+                            30 + 15 * cos ((pi / 4) * toFloat i)
+
+                        y =
+                            30 + 15 * sin ((pi / 4) * toFloat i)
+                    in
+                    P.circle ( x, y ) (2 + sin (env.globalData.globalStartTime * 0.005 + 2 * pi * toFloat i / 8)) Color.white
+                )
+                (List.range 0 7)
+        )
 
 
 gcCon : InitOption -> ConcreteGlobalComponent Data userdata scenemsg
@@ -73,6 +81,6 @@ gcCon opt =
 
 {-| Generate a global component.
 -}
-genGC : InitOption -> Maybe GCTarget -> GlobalComponentStorage userdata scenemsg
-genGC opt =
-    genGlobalComponent (gcCon opt) E.null
+genGC : Maybe GCTarget -> GlobalComponentStorage userdata scenemsg
+genGC =
+    genGlobalComponent (gcCon {}) E.null
