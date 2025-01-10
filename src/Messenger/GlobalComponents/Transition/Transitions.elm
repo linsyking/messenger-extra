@@ -38,16 +38,16 @@ fadeIn r t =
 
 {-| Fade out transition using mask image.
 -}
-fadeOutImg : String -> SingleTrans
-fadeOutImg mask r t =
-    Comp.imgFade mask t r (P.clear Color.black)
+fadeOutImg : String -> Bool -> SingleTrans
+fadeOutImg mask invert r t =
+    Comp.imgFade mask t invert r (P.clear Color.black)
 
 
 {-| Fade in transition using mask image.
 -}
-fadeInImg : String -> SingleTrans
-fadeInImg mask r t =
-    Comp.imgFade mask t (P.clear Color.black) r
+fadeInImg : String -> Bool -> SingleTrans
+fadeInImg mask invert r t =
+    Comp.imgFade mask t invert (P.clear Color.black) r
 
 
 {-| Fade out transition with a color.
@@ -87,6 +87,6 @@ fadeMix r1 r2 t =
 
 {-| Fading transition based on mask image used in mixed mode.
 -}
-fadeImgMix : String -> DoubleTrans
-fadeImgMix mask r1 r2 t =
-    Comp.imgFade mask t r1 r2
+fadeImgMix : String -> Bool -> DoubleTrans
+fadeImgMix mask invert r1 r2 t =
+    Comp.imgFade mask t invert r1 r2
