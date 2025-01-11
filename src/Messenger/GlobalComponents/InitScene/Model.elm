@@ -58,12 +58,12 @@ view env data _ =
                 (\i ->
                     let
                         x =
-                            30 + 15 * cos ((pi / 4) * toFloat i)
+                            15 * cos ((pi / 4) * toFloat i)
 
                         y =
-                            30 + 15 * sin ((pi / 4) * toFloat i)
+                             15 * sin ((pi / 4) * toFloat i)
                     in
-                    P.circle ( x, y ) (2 + sin (env.globalData.globalStartTime * 0.005 + 2 * pi * toFloat i / 8)) Color.white
+                    P.circle ( 30 + x, env.globalData.internalData.virtualHeight - 30 + y ) (2 + sin (env.globalData.globalStartTime * 0.005 + 2 * pi * toFloat i / 8)) Color.white
                 )
                 (List.range 0 7)
         )
