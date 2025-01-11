@@ -40,7 +40,7 @@ update : GlobalComponentUpdate userdata scenemsg Data
 update env _ data bdata =
     let
         dead =
-            env.globalData.sceneStartFrame > 0
+            loadedResourceNum env.globalData == env.globalData.internalData.totResNum
     in
     ( ( data, { bdata | dead = dead } ), [], ( env, False ) )
 
