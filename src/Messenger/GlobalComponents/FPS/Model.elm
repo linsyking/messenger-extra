@@ -20,6 +20,7 @@ import REGL.BuiltinPrograms as P
 -}
 type alias InitOption =
     { fontSize : Float
+    , font : String
     }
 
 
@@ -27,6 +28,7 @@ type alias Data =
     { lastTenTime : List Float
     , fps : Float
     , size : Float
+    , font : String
     }
 
 
@@ -35,6 +37,7 @@ init opt _ _ =
     ( { lastTenTime = []
       , fps = 0
       , size = opt.fontSize
+      , font = opt.font
       }
     , { dead = False
       , postProcessor = identity
@@ -74,8 +77,8 @@ updaterec env _ data bdata =
 
 
 view : GlobalComponentView userdata scenemsg Data
-view env data _ =
-    P.textbox ( 0, 0 ) data.size ("FPS: " ++ String.fromInt (floor data.fps)) "arial" (Color.rgba 0 0 0 0.5)
+view _ data _ =
+    P.textbox ( 0, 0 ) data.size ("FPS: " ++ String.fromInt (floor data.fps)) data.font (Color.rgba 0 0 0 0.5)
 
 
 gcCon : InitOption -> ConcreteGlobalComponent Data userdata scenemsg
